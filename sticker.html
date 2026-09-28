@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>참 잘했어요! 칭찬 포도알 - 채원이의 홈피</title>
+  
+  <!-- 감자꽃 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+  
+  <!-- 폭죽 효과 라이브러리 (Canvas-Confetti) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #ff6b6b;
+      --secondary-color: #6c5ce7;
+      --accent-color: #ffe66d;
+      --bg-color: #f7f9fc;
+      --card-bg: #ffffff;
+      --text-color: #2c3e50;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Gamja Flower', cursive, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 10px;
+    }
+
+    header {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .home-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 20px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    .home-btn:hover {
+      background-color: #ee5253;
+      transform: translateY(-2px);
+    }
+
+    .title {
+      font-size: 2rem;
+      color: #333;
+      text-shadow: 2px 2px 0px #ffe66d;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 진행 상황 */
+    .status-board {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #f3e5f5;
+      padding: 15px 20px;
+      border-radius: 18px;
+      margin-bottom: 20px;
+      border: 2px dashed #ab47bc;
+    }
+
+    .status-text {
+      font-size: 1.5rem;
+      color: #4a148c;
+      font-weight: bold;
+    }
+
+    .counter {
+      font-size: 1.8rem;
+      color: #7b1fa2;
+      font-weight: bold;
+    }
+
+    /* 진짜 포도송이 컨테이너 */
+    .grape-tree-container {
+      position: relative;
+      width: 100%;
+      max-width: 550px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px 0 30px 0;
+      padding-top: 50px; /* 줄기/잎 들어갈 공간 */
+    }
+
+    /* 포도 줄기 & 잎사귀 그래픽 */
+    .grape-vine-svg {
+      position: absolute;
+      top: -10px;
+      width: 280px;
+      height: 90px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* 역삼각형 구조 래퍼 */
+    .grape-bunch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .grape-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .grape-item {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background-color: #f1f2f6;
+      border: 3px dashed #a4b0be;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #747d8c;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .grape-item:hover {
+      transform: scale(1.12);
+      border-color: #8e44ad;
+    }
+
+    /* 채원이 사진으로 채워졌을 때 */
+    .grape-item.checked {
+      border: 3px solid #8e44ad;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 4px 10px rgba(142, 68, 173, 0.4);
+      animation: pop 0.3s ease-out;
+    }
+
+    .grape-item.checked span {
+      display: none; /* 숫자 숨김 */
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.6); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    /* 선물 작성 박스 */
+    .gift-box {
+      width: 100%;
+      background-color: #fff9db;
+      border: 2px solid #ffe066;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .gift-title {
+      font-size: 1.4rem;
+      color: #f59f00;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gift-input-wrapper {
+      display: flex;
+      gap: 10px;
+    }
+
+    .gift-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #ffd43b;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      outline: none;
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    .gift-input:focus {
+      border-color: #f59f00;
+    }
+
+    .save-btn {
+      background-color: #f59f00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Gamja Flower', cursive;
+      transition: background-color 0.2s;
+    }
+
+    .save-btn:hover {
+      background-color: #f08c00;
+    }
+
+    /* 초기화 버튼 */
+    .reset-btn {
+      background-color: #ced4da;
+      color: #495057;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-family: 'Gamja Flower', cursive;
+      align-self: flex-end;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+      background-color: #adb5bd;
+      color: white;
+    }
+
+    /* 30개 완성 축하 레이어 (전체 화면) */
+    .celebrate-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .celebrate-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .celebrate-title {
+      font-size: 3.5rem;
+      color: #ffe66d;
+      text-shadow: 0 0 20px #ff6b6b;
+      margin-bottom: 10px;
+      animation: pulse 1.2s infinite alternate;
+      text-align: center;
+    }
+
+    .celebrate-subtitle {
+      font-size: 2rem;
+      color: #ffffff;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    /* 대형 채원이 + 고깔모자 */
+    .chaewon-big-wrapper {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin-bottom: 30px;
+    }
+
+    .chaewon-big-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 8px solid #ffe66d;
+      box-shadow: 0 0 30px rgba(255, 230, 109, 0.8);
+    }
+
+    .party-hat {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-30%) rotate(15deg);
+      width: 120px;
+      height: 120px;
+      pointer-events: none;
+      filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    }
+
+    .close-modal-btn {
+      background-color: #ff6b6b;
+      color: white;
+      border: 3px solid #ffffff;
+      padding: 12px 35px;
+      border-radius: 30px;
+      font-size: 1.6rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Gamja Flower', cursive;
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .close-modal-btn:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); }
+      100% { transform: scale(1.05); }
+    }
+
+    @media (max-width: 600px) {
+      .grape-item {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+        border-width: 2px;
+      }
+      .grape-row {
+        gap: 4px;
+      }
+      .grape-vine-svg {
+        width: 220px;
+        top: -5px;
+      }
+      .title {
+        font-size: 1.5rem;
+      }
+      .celebrate-title {
+        font-size: 2.5rem;
+      }
+      .celebrate-subtitle {
+        font-size: 1.4rem;
+      }
+      .chaewon-big-wrapper {
+        width: 200px;
+        height: 200px;
+      }
+      .party-hat {
+        top: -45px;
+        width: 90px;
+        height: 90px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="home-btn">🏠 홈으로</a>
+    <h1 class="title">🍇 채원이의 칭찬 포도알</h1>
+  </header>
+
+  <div class="container">
+    
+    <!-- 상단 진행 상황 -->
+    <div class="status-board">
+      <div class="status-text">칭찬 도장을 꾹꾹 찍어보세요!</div>
+      <div class="counter"><span id="checkedCount">0</span> / 30 개</div>
+    </div>
+
+    <!-- 포도송이 영역 -->
+    <div class="grape-tree-container">
+      
+      <!-- 포도 줄기 및 잎사귀 SVG -->
+      <svg class="grape-vine-svg" viewBox="0 0 200 70">
+        <!-- 메인 줄기 -->
+        <path d="M100,55 Q100,30 130,20 T170,10" fill="none" stroke="#6d4c41" stroke-width="5" stroke-linecap="round"/>
+        <path d="M100,55 Q95,25 60,25" fill="none" stroke="#6d4c41" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="100" cy="55" r="5" fill="#5d4037" />
+
+        <!-- 왼쪽 포도 잎 -->
+        <g transform="translate(40, 5) scale(0.7)">
+          <path d="M30,30 Q10,10 0,30 Q-10,50 10,60 Q30,70 40,50 Z" fill="#2ed573" stroke="#26de81" stroke-width="2"/>
+          <path d="M30,30 Q20,40 10,60" fill="none" stroke="#26de81" stroke-width="1.5"/>
+        </g>
+
+        <!-- 오른쪽 포도 잎 -->
+        <g transform="translate(130, 0) scale(0.8) rotate(20)">
+          <path d="M30,30 Q10,10 0,30 Q-10,50 10,60 Q30,70 40,50 Z" fill="#2ed573" stroke="#26de81" stroke-width="2"/>
+          <path d="M30,30 Q20,40 10,60" fill="none" stroke="#26de81" stroke-width="1.5"/>
+        </g>
+
+        <!-- 덩굴 손 (꼬불꼬불) -->
+        <path d="M130,20 Q145,10 140,0 T150,-10" fill="none" stroke="#2ed573" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 포도알 역삼각형 배열 (8 - 7 - 6 - 5 - 3 - 1 = 30개) -->
+      <div class="grape-bunch" id="grapeBunch"></div>
+
+    </div>
+
+    <!-- 받고 싶은 선물 작성 -->
+    <div class="gift-box">
+      <div class="gift-title">🎁 30개를 다 모으면 받고 싶은 선물</div>
+      <div class="gift-input-wrapper">
+        <input type="text" id="giftInput" class="gift-input" placeholder="예: 시크릿쥬쥬 화장대, 장난감 선물">
+        <button class="save-btn" onclick="saveGift()">저장</button>
+      </div>
+    </div>
+
+    <!-- 리셋 버튼 -->
+    <button class="reset-btn" onclick="confirmReset()">🔄 새로 시작하기</button>
+
+  </div>
+
+  <!-- 30개 완성 축하 전체화면 팝업 -->
+  <div class="celebrate-overlay" id="celebrateOverlay">
+    <div class="celebrate-title">🎉 축하합니다! 🎉</div>
+    <div class="celebrate-subtitle">칭찬 포도알 30개를 모두 모았어요!</div>
+
+    <!-- 고깔모자 쓴 대형 채원이 사진 -->
+    <div class="chaewon-big-wrapper">
+      <svg class="party-hat" viewBox="0 0 100 100">
+        <polygon points="50,5 15,90 85,90" fill="#ff4757" />
+        <polygon points="50,5 35,90 65,90" fill="#ffa502" />
+        <circle cx="50" cy="5" r="8" fill="#ffe66d" />
+        <circle cx="25" cy="65" r="4" fill="#ffffff" />
+        <circle cx="70" cy="45" r="4" fill="#ffffff" />
+        <circle cx="45" cy="35" r="3" fill="#ffffff" />
+        <rect x="10" y="86" width="80" height="8" rx="4" fill="#2ed573" />
+      </svg>
+      <img src="chaewon.png" alt="채원이" class="chaewon-big-img" onerror="this.src='https://via.placeholder.com/300?text=Chaewon'">
+    </div>
+
+    <button class="close-modal-btn" onclick="closeModal()">확인</button>
+  </div>
+
+  <script>
+    const TOTAL_GRAPES = 30;
+    const STORAGE_KEY_GRAPES = 'chaewon_grape_list';
+    const STORAGE_KEY_GIFT = 'chaewon_grape_gift';
+    const IMAGE_PATH = 'chaewon.png';
+
+    // 포도송이 역삼각형 구조 (8 + 7 + 6 + 5 + 3 + 1 = 30개)
+    const rowCounts = [8, 7, 6, 5, 3, 1];
+
+    let grapeStates = Array(TOTAL_GRAPES).fill(false);
+    let confettiInterval = null;
+
+    function init() {
+      loadData();
+      renderGrapes();
+      updateCounter();
+    }
+
+    function loadData() {
+      const savedGrapes = localStorage.getItem(STORAGE_KEY_GRAPES);
+      if (savedGrapes) {
+        try {
+          grapeStates = JSON.parse(savedGrapes);
+        } catch(e) {
+          grapeStates = Array(TOTAL_GRAPES).fill(false);
+        }
+      }
+
+      const savedGift = localStorage.getItem(STORAGE_KEY_GIFT);
+      if (savedGift) {
+        document.getElementById('giftInput').value = savedGift;
+      }
+    }
+
+    // 포도알 역삼각형 렌더링
+    function renderGrapes() {
+      const bunch = document.getElementById('grapeBunch');
+      bunch.innerHTML = '';
+
+      let grapeIndex = 0;
+
+      rowCounts.forEach(count => {
+        const row = document.createElement('div');
+        row.className = 'grape-row';
+
+        for (let i = 0; i < count; i++) {
+          const currentIndex = grapeIndex;
+          const item = document.createElement('div');
+          item.className = 'grape-item' + (grapeStates[currentIndex] ? ' checked' : '');
+
+          if (grapeStates[currentIndex]) {
+            item.style.backgroundImage = `url('${IMAGE_PATH}')`;
+          } else {
+            item.style.backgroundImage = 'none';
+          }
+
+          const span = document.createElement('span');
+          span.innerText = currentIndex + 1;
+          item.appendChild(span);
+
+          item.onclick = () => toggleGrape(currentIndex);
+          row.appendChild(item);
+
+          grapeIndex++;
+        }
+
+        bunch.appendChild(row);
+      });
+    }
+
+    function toggleGrape(index) {
+      grapeStates[index] = !grapeStates[index];
+      saveData();
+      renderGrapes();
+      updateCounter();
+
+      const currentCount = grapeStates.filter(Boolean).length;
+      if (currentCount === TOTAL_GRAPES) {
+        triggerCelebration();
+      }
+    }
+
+    function updateCounter() {
+      const count = grapeStates.filter(Boolean).length;
+      document.getElementById('checkedCount').innerText = count;
+    }
+
+    function saveGift() {
+      const giftText = document.getElementById('giftInput').value;
+      localStorage.setItem(STORAGE_KEY_GIFT, giftText);
+      alert('받고 싶은 선물이 저장되었습니다! 🎁');
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY_GRAPES, JSON.stringify(grapeStates));
+    }
+
+    function triggerCelebration() {
+      const overlay = document.getElementById('celebrateOverlay');
+      overlay.classList.add('active');
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      const duration = 4 * 1000;
+      const animationEnd = Date.now() + duration;
+
+      confettiInterval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(confettiInterval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({
+          particleCount,
+          startVelocity: 30,
+          spread: 360,
+          origin: { x: Math.random(), y: Math.random() - 0.2 }
+        });
+      }, 250);
+    }
+
+    function closeModal() {
+      const overlay = document.getElementById('celebrateOverlay');
+      overlay.classList.remove('active');
+      if (confettiInterval) clearInterval(confettiInterval);
+    }
+
+    function confirmReset() {
+      if (confirm('포도알을 처음부터 다시 모을까요?')) {
+        grapeStates = Array(TOTAL_GRAPES).fill(false);
+        saveData();
+        renderGrapes();
+        updateCounter();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
