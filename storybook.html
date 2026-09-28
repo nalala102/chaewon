@@ -103,7 +103,6 @@
       padding: 25px;
     }
 
-    /* 이미지 영역 설정 (<img> 태그 사용으로 변경) */
     .image-wrapper {
       width: 100%;
       height: 420px;
@@ -249,8 +248,7 @@
 
   <div class="book-container">
     <div class="image-wrapper">
-      <!-- 이미지를 직접 태그로 출력 -->
-      <img id="storyImg" class="story-image" src="page1.png" alt="동화 이미지" onerror="this.src='chawon.png'">
+      <img id="storyImg" class="story-image" src="page1.png" alt="동화 이미지" onerror="this.onerror=null; this.src='chawon.png';">
     </div>
     
     <div class="story-text" id="storyText">
@@ -267,7 +265,6 @@
   <div class="thumbnail-container" id="thumbContainer"></div>
 
   <script>
-    // 페이지별 PNG 파일 지정 (page1.png ~ page9.png)
     const storyData = [
       {
         page: 1,
@@ -290,7 +287,7 @@
         text: "채원이는 불가사리와 조개를 발견했어요.\n\"이건 무슨 맛일까?\"\n조개를 쏙 먹는 시늉을 했어요.\n\n채원이의 장난에\n엄마아빠는 하하호호\n웃음을 터뜨렸답니다."
       },
       {
-        page:5,
+        page: 5,
         img: 'page5.png',
         text: "이번엔 물고기들을 만났어요.\n\"물고기들아, 안녕!\"\n\n채원이는 아빠랑 같이 무지개 물고기들에게\n먹이를 나누어 주었지요."
       },
@@ -307,13 +304,13 @@
       {
         page: 8,
         img: 'page8.png',
-        text: "그리고 신기한 일이 생겼어요\n아까 만난 물고기들이 \n채원이 주위를 빙글빙글 도는게 아니겠어요?\n채원는 물고기들과\n즐겁게 놀았답니다."
+        text: "그리고 신기한 일이 생겼어요\n아까 만난 물고기들이 \n채원이 주위를 빙글빙글 도는게 아니겠어요?\n채원이는 물고기들과\n즐겁게 놀았답니다."
       },
       {  
-             page: 9,
+        page: 9,
         img: 'page9.png',
-        text: "신나게 놀던 채원이와 엄마는\n아빠와 함께 집에 갈 준비를 했어요.\n떠나는 것이 아쉬웠지만,\n다음에 다시 오기로 아빠와 엄마와 약속했답니다.\n"다음에 또 만나자. 무지개 바다야!\""   
-     }
+        text: "신나게 놀던 채원이와 엄마는\n아빠와 함께 집에 갈 준비를 했어요.\n떠나는 것이 아쉬웠지만,\n다음에 다시 오기로 아빠와 엄마와 약속했답니다.\n\"다음에 또 만나자. 무지개 바다야!\""   
+      }
     ];
 
     let currentIndex = 0;
@@ -367,7 +364,7 @@
       }
     }
 
-    function updatePage() {
+    function updatePage(isUserAction = false) {
       const data = storyData[currentIndex];
 
       // 이미지 변경
@@ -405,20 +402,23 @@
         }
       });
 
-      speakCurrentPage();
+      // 사용자의 클릭/키보드 조작일 때만 음성 출력 (브라우저 자동재생 제한 방지)
+      if (isUserAction) {
+        speakCurrentPage();
+      }
     }
 
     function prevPage() {
       if (currentIndex > 0) {
         currentIndex--;
-        updatePage();
+        updatePage(true);
       }
     }
 
     function nextPage() {
       if (currentIndex < storyData.length - 1) {
         currentIndex++;
-        updatePage();
+        updatePage(true);
       }
     }
 
@@ -434,13 +434,16 @@
         const img = document.createElement('img');
         img.src = item.img;
         img.alt = `${index + 1}페이지`;
-        img.onerror = () => { thumb.innerText = `${index + 1}장`; };
+        img.onerror = () => { 
+          img.style.display = 'none';
+          thumb.innerText = `${index + 1}장`; 
+        };
 
         thumb.appendChild(img);
 
         thumb.onclick = () => {
           currentIndex = index;
-          updatePage();
+          updatePage(true);
         };
         container.appendChild(thumb);
       });
@@ -453,7 +456,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderThumbnails();
-      updatePage();
+      updatePage(false);
     });
   </script>
 </body>
