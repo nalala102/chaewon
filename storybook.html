@@ -103,7 +103,7 @@
       padding: 25px;
     }
 
-    /* 이미지 영역 설정 */
+    /* 이미지 영역 설정 (<img> 태그 사용으로 변경) */
     .image-wrapper {
       width: 100%;
       height: 420px;
@@ -249,6 +249,7 @@
 
   <div class="book-container">
     <div class="image-wrapper">
+      <!-- 이미지를 직접 태그로 출력 -->
       <img id="storyImg" class="story-image" src="page1.png" alt="동화 이미지" onerror="this.src='chawon.png'">
     </div>
     
@@ -266,6 +267,7 @@
   <div class="thumbnail-container" id="thumbContainer"></div>
 
   <script>
+    // 페이지별 PNG 파일 지정 (page1.png ~ page9.png)
     const storyData = [
       {
         page: 1,
@@ -316,24 +318,6 @@
 
     let currentIndex = 0;
     let isTtsEnabled = true;
-    let selectedVoice = null;
-
-    // 한국어 전용 목소리를 고정으로 탐색하는 함수
-    function getKoreanVoice() {
-      if (!('speechSynthesis' in window)) return null;
-      const voices = window.speechSynthesis.getVoices();
-      
-      // 우선순위: 자연스러운 온라인/고품질 한국어 목소리 -> 일반 한국어 목소리
-      return voices.find(v => v.lang.includes('ko') && (v.name.includes('Natural') || v.name.includes('Sun-Hi') || v.name.includes('Google') || v.name.includes('Online')))
-          || voices.find(v => v.lang.includes('ko') || v.lang.includes('KO'));
-    }
-
-    // 목소리가 비동기로 로드될 때 지정하도록 설정
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = () => {
-        selectedVoice = getKoreanVoice();
-      };
-    }
 
     function speakCurrentPage() {
       if (!isTtsEnabled || !('speechSynthesis' in window)) return;
@@ -349,17 +333,23 @@
         utterance.rate = 0.85;
         utterance.pitch = 1.15;
 
-        if (!selectedVoice) {
-          selectedVoice = getKoreanVoice();
-        }
+        const allVoices = window.speechSynthesis.getVoices();
+        const naturalVoice = allVoices.find(v => 
+          v.lang.includes('ko') && (
+            v.name.includes('Sun-Hi') || 
+            v.name.includes('Natural') || 
+            v.name.includes('Online') || 
+            v.name.includes('Google')
+          )
+        ) || allVoices.find(v => v.lang.includes('ko'));
 
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
+        if (naturalVoice) {
+          utterance.voice = naturalVoice;
         }
 
         window.speechSynthesis.speak(utterance);
       } catch (err) {
-        console.warn("TTS 실행 처리:", err);
+        console.warn("TTS 실행 예외:", err);
       }
     }
 
@@ -380,26 +370,31 @@
     function updatePage() {
       const data = storyData[currentIndex];
 
+      // 이미지 변경
       const imgElem = document.getElementById('storyImg');
       if (imgElem) {
         imgElem.src = data.img;
       }
 
+      // 텍스트 변경
       const textElem = document.getElementById('storyText');
       if (textElem) {
         textElem.innerText = data.text;
       }
 
+      // 페이지 번호 변경
       const pageIndicator = document.getElementById('pageIndicator');
       if (pageIndicator) {
         pageIndicator.innerText = `${currentIndex + 1} / ${storyData.length}`;
       }
 
+      // 이전/다음 버튼 제어
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
       if (prevBtn) prevBtn.disabled = (currentIndex === 0);
       if (nextBtn) nextBtn.disabled = (currentIndex === storyData.length - 1);
 
+      // 하단 썸네일 강조 표시
       const thumbs = document.querySelectorAll('.thumb');
       thumbs.forEach((thumb, idx) => {
         if (idx === currentIndex) {
@@ -458,7 +453,6 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderThumbnails();
-      selectedVoice = getKoreanVoice();
       updatePage();
     });
   </script>
