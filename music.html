@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="origin">
+  <title>알록달록 동요세상 - 채원이의 홈피</title>
+  <!-- 감자꽃(Gamja Flower) 폰트 불러오기 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #ff6b6b;
+      --secondary-color: #4ecdc4;
+      --accent-color: #ffe66d;
+      --bg-color: #f7f9fc;
+      --card-bg: #ffffff;
+      --text-color: #2c3e50;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Gamja Flower', cursive, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 10px;
+    }
+
+    header {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .home-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 20px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    .home-btn:hover {
+      background-color: #ee5253;
+      transform: translateY(-2px);
+    }
+
+    .title {
+      font-size: 2rem;
+      color: #333;
+      text-shadow: 2px 2px 0px #ffe66d;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 비디오 플레이어 영역 */
+    .video-wrapper {
+      width: 100%;
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 비율 */
+      height: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      background-color: #000;
+      margin-bottom: 12px;
+      border: 4px solid var(--accent-color);
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* 유튜브 보완 링크 */
+    .direct-link-box {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .direct-link-box a {
+      color: #ff6b6b;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    /* 노래 버튼 선택 영역 */
+    .section-title {
+      font-size: 1.5rem;
+      margin: 10px 0 10px 0;
+      width: 100%;
+      text-align: left;
+      color: #ff6b6b;
+    }
+
+    .song-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 25px;
+    }
+
+    .song-btn {
+      background-color: #e3f2fd;
+      border: 2px solid #90caf9;
+      color: #1565c0;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Gamja Flower', cursive;
+      text-align: center;
+      word-break: keep-all;
+    }
+
+    .song-btn:hover {
+      background-color: #bbdefb;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .song-btn.active {
+      background-color: var(--secondary-color);
+      color: white;
+      border-color: #2bcbba;
+      box-shadow: 0 4px 10px rgba(78, 205, 196, 0.4);
+    }
+
+    /* 자유 입력 섹션 */
+    .custom-input-box {
+      width: 100%;
+      background-color: #fffde7;
+      border: 2px dashed #ffd54f;
+      padding: 18px;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .youtube-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #ffe082;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      outline: none;
+      font-family: sans-serif;
+    }
+
+    .youtube-input:focus {
+      border-color: #ffb300;
+    }
+
+    .apply-btn {
+      background-color: #ffb300;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Gamja Flower', cursive;
+      transition: background-color 0.2s;
+    }
+
+    .apply-btn:hover {
+      background-color: #ffa000;
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 1.5rem;
+      }
+      .song-buttons {
+        grid-template-columns: 1fr;
+      }
+      .input-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="home-btn">🏠 홈으로</a>
+    <h1 class="title">🎵 알록달록 동요세상</h1>
+  </header>
+
+  <div class="container">
+    <!-- 유튜브 플레이어 -->
+    <div class="video-wrapper">
+      <iframe id="youtubePlayer" 
+              src="" 
+              title="YouTube video player" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="origin"
+              allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- 외부 재생 막힘 대비 링크 -->
+    <div class="direct-link-box">
+      <span>📺 화면이 안 열리나요? </span>
+      <a id="directYoutubeLink" href="#" target="_blank" rel="noopener noreferrer">👉 유튜브에서 바로 보기</a>
+    </div>
+
+    <!-- 노래 선택 버튼 -->
+    <div class="section-title">✨ 신나는 동요 선택하기</div>
+    <div class="song-buttons" id="songButtonContainer"></div>
+
+    <!-- 유튜브 주소 직접 입력 -->
+    <div class="custom-input-box">
+      <div style="font-size: 1.3rem; font-weight: bold; color: #f57f17;">🔗 다른 유튜브 링크 직접 넣기</div>
+      <div class="input-row">
+        <input type="text" id="customUrlInput" class="youtube-input" placeholder="유튜브 링크(URL)를 붙여넣으세요">
+        <button class="apply-btn" onclick="playCustomUrl()">재생하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const songList = [
+      {
+        title: "🔤 슈퍼파닉스 한글",
+        videoId: "h_w9D5utUcU"
+      },
+      {
+        title: "🔤 슈퍼파닉스 영어",
+        videoId: "Kd3YRvCT4W8"
+      },
+      {
+        title: "🥦 Do You Like Broccoli Ice Cream?",
+        videoId: "frN3nvhIHUk"
+      },
+      {
+        title: "🦈 핑크퐁 아기상어",
+        videoId: "XqZsoesa55w"
+      }
+    ];
+
+    function extractVideoId(input) {
+      if (!input) return '';
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = input.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : input.trim();
+    }
+
+    function playSongById(videoId, buttonIndex) {
+      const player = document.getElementById('youtubePlayer');
+      const directLink = document.getElementById('directYoutubeLink');
+
+      if (videoId) {
+        player.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+        directLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+      } else {
+        alert('올바른 유튜브 링크를 입력해주세요!');
+        return;
+      }
+
+      const buttons = document.querySelectorAll('.song-btn');
+      buttons.forEach((btn, idx) => {
+        if (idx === buttonIndex) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    function renderSongButtons() {
+      const container = document.getElementById('songButtonContainer');
+      container.innerHTML = '';
+
+      songList.forEach((song, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'song-btn' + (index === 0 ? ' active' : '');
+        btn.innerText = song.title;
+        btn.onclick = () => playSongById(song.videoId, index);
+        container.appendChild(btn);
+      });
+
+      if (songList.length > 0) {
+        playSongById(songList[0].videoId, 0);
+      }
+    }
+
+    function playCustomUrl() {
+      const input = document.getElementById('customUrlInput');
+      const videoId = extractVideoId(input.value);
+
+      if (!videoId) {
+        alert('유튜브 주소를 입력해 주세요!');
+        return;
+      }
+
+      playSongById(videoId, -1);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSongButtons();
+    });
+  </script>
+</body>
+</html>
