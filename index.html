@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏰 채원이의 비밀 기지 👑</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Sunflower & Gowun Dodum -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Sunflower:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Gowun Dodum', sans-serif;
+            background: linear-gradient(135deg, #fff0f6 0%, #f3e8ff 40%, #e0f2fe 100%);
+            min-height: 100vh;
+        }
+        .font-sunflower {
+            font-family: 'Sunflower', sans-serif;
+        }
+
+        /* Teenieping Magic Floating Animations */
+        @keyframes floatGentle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        @keyframes floatDrift {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(-2deg); }
+            50% { transform: translateY(-14px) translateX(6px) rotate(4deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.95; transform: scale(1.06); }
+        }
+
+        .floating-header {
+            animation: floatGentle 4.5s ease-in-out infinite;
+        }
+        .teenie-item-1 { animation: floatDrift 5s ease-in-out infinite; }
+        .teenie-item-2 { animation: floatDrift 6s ease-in-out 1s infinite; }
+        .teenie-item-3 { animation: floatGentle 5.5s ease-in-out 0.5s infinite; }
+        .teenie-item-4 { animation: floatDrift 7s ease-in-out 2s infinite; }
+
+        /* Profile Image Border Effect */
+        .profile-border {
+            background: linear-gradient(135deg, #ffb6c1, #c084fc, #93c5fd);
+            padding: 6px;
+            border-radius: 9999px;
+            box-shadow: 0 12px 28px -5px rgba(236, 72, 153, 0.35);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        .profile-img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 9999px;
+            background-color: #ffffff;
+            border: 4px solid #ffffff;
+        }
+
+        /* Card Hover Animations */
+        .portal-card {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .portal-card:hover {
+            transform: translateY(-12px) scale(1.04);
+            box-shadow: 0 22px 35px -10px rgba(219, 39, 119, 0.25);
+        }
+        .portal-card:active {
+            transform: translateY(-4px) scale(0.98);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-700 antialiased selection:bg-pink-200 overflow-x-hidden">
+
+    <!-- Soft Catch! Teenieping Decorative Floating Background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10 opacity-75">
+        <!-- Floating Heart Locket (Top Left) -->
+        <div class="absolute top-8 left-6 sm:left-12 teenie-item-1 text-pink-400">
+            <svg class="w-12 h-12 drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </div>
+
+        <!-- Floating Magic Wand & Crown (Top Right) -->
+        <div class="absolute top-12 right-6 sm:right-16 teenie-item-2 text-purple-400 flex items-center gap-1">
+            <span class="text-3xl filter drop-shadow">👑</span>
+            <span class="text-2xl filter drop-shadow">🪄</span>
+        </div>
+
+        <!-- Floating Teenieping Bow / Ribbon (Bottom Left) -->
+        <div class="absolute bottom-20 left-8 sm:left-20 teenie-item-3 text-pink-300">
+            <span class="text-4xl filter drop-shadow">🎀</span>
+        </div>
+
+        <!-- Floating Magic Sparkles & Stars (Bottom Right) -->
+        <div class="absolute bottom-16 right-10 sm:right-24 teenie-item-4 text-amber-300">
+            <span class="text-4xl filter drop-shadow">💖✨</span>
+        </div>
+
+        <!-- Soft Teenieping Cloud Decorations -->
+        <div class="absolute top-1/3 left-4 text-white/60 text-5xl select-none">☁️</div>
+        <div class="absolute top-2/3 right-6 text-white/60 text-6xl select-none">☁️</div>
+    </div>
+
+    <!-- Header / Profile Section -->
+    <header class="pt-10 pb-6 px-4 text-center flex flex-col items-center justify-center">
+        <!-- Floating Wrapper -->
+        <div class="floating-header flex flex-col items-center">
+            <!-- Profile Avatar -->
+            <div class="profile-border mb-4 relative">
+                <!-- Tiny Princess Crown Badge -->
+                <div class="absolute -top-4 -right-1 text-3xl transform rotate-12 drop-shadow-md">👑</div>
+                <img src="chaewon.png.png" 
+                     alt="채원이 프로필" 
+                     class="profile-img" 
+                     onerror="this.src='chaewon.png'; this.onerror=function(){this.src='https://placehold.co/150x150/fbcfe8/c084fc?text=채원이';}">
+            </div>
+
+            <!-- Title -->
+            <h1 class="font-sunflower text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 drop-shadow-sm tracking-wide">
+                🏰 채원이의 비밀 기지 👑
+            </h1>
+            <p class="mt-2.5 text-base sm:text-lg font-medium text-pink-600 bg-white/80 backdrop-blur-md px-6 py-1.5 rounded-full shadow-sm border border-pink-200 inline-flex items-center gap-1.5">
+                <span>무엇을 하고 놀까?</span>
+                <span class="text-xl">🤔✨</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-4xl mx-auto w-full px-6 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+
+            <!-- Card 1: 동화책 -->
+            <a href="storybook.html" class="portal-card group block bg-white/90 backdrop-blur-md rounded-3xl p-5 text-center border-2 border-pink-200 shadow-lg shadow-pink-100/60 flex flex-col items-center justify-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-pink-100/90 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform shadow-inner">
+                    🌈📖
+                </div>
+                <h2 class="font-sunflower text-lg sm:text-xl font-bold text-slate-800 whitespace-pre-line leading-snug">
+                    무지개바다
+                    <span class="text-pink-500 block">동화책듣기</span>
+                </h2>
+            </a>
+
+            <!-- Card 2: 그림판 -->
+            <a href="canvas.html" class="portal-card group block bg-white/90 backdrop-blur-md rounded-3xl p-5 text-center border-2 border-amber-200 shadow-lg shadow-amber-100/60 flex flex-col items-center justify-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-100/90 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform shadow-inner">
+                    🎨🖌️
+                </div>
+                <h2 class="font-sunflower text-lg sm:text-xl font-bold text-slate-800 whitespace-pre-line leading-snug">
+                    알록달록
+                    <span class="text-amber-500 block">그림판</span>
+                </h2>
+            </a>
+
+            <!-- Card 3: 동요 세상 -->
+            <a href="music.html" class="portal-card group block bg-white/90 backdrop-blur-md rounded-3xl p-5 text-center border-2 border-emerald-200 shadow-lg shadow-emerald-100/60 flex flex-col items-center justify-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100/90 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform shadow-inner">
+                    🎶🐥
+                </div>
+                <h2 class="font-sunflower text-lg sm:text-xl font-bold text-slate-800 whitespace-pre-line leading-snug">
+                    신나는
+                    <span class="text-emerald-500 block">동요 세상</span>
+                </h2>
+            </a>
+
+            <!-- Card 4: 칭찬 포도알 -->
+            <a href="sticker.html" class="portal-card group block bg-white/90 backdrop-blur-md rounded-3xl p-5 text-center border-2 border-purple-200 shadow-lg shadow-purple-100/60 flex flex-col items-center justify-center">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-purple-100/90 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl mb-3 group-hover:scale-110 transition-transform shadow-inner">
+                    🍇✨
+                </div>
+                <h2 class="font-sunflower text-lg sm:text-xl font-bold text-slate-800 whitespace-pre-line leading-snug">
+                    칭찬포도알
+                    <span class="text-purple-500 block">모으기</span>
+                </h2>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-xs sm:text-sm text-purple-600/80 font-medium">
+        <p class="bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full inline-block border border-pink-100 shadow-xs">
+            💖 채원이를 위한 특별한 비밀공간 - 아빠가 💖
+        </p>
+    </footer>
+
+</body>
+</html>

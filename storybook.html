@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>무지개 바다 여행 - 동화책</title>
+  <!-- 귀여운 감자꽃(Gamja Flower) 폰트 불러오기 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #ff7e5f;
+      --secondary-color: #feb47b;
+      --bg-color: #f7f9fc;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-color: #2c3e50;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Gamja Flower', cursive, 'Nanum Gothic', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px 10px;
+    }
+
+    header {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      z-index: 10;
+    }
+
+    .home-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    .home-btn:hover {
+      background-color: #e0664a;
+      transform: translateY(-2px);
+    }
+
+    .tts-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .tts-btn {
+      background-color: #4facfe;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    .tts-btn.active {
+      background-color: #00f2fe;
+      color: #333;
+    }
+
+    .book-container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--card-bg);
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px;
+    }
+
+    /* 이미지 영역 설정 */
+    .image-wrapper {
+      width: 100%;
+      height: 420px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #eef4fb;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      border: 3px solid #ffe082;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .story-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .story-text {
+      width: 100%;
+      margin-top: 20px;
+      padding: 22px;
+      background-color: #fffde7;
+      border-radius: 16px;
+      font-size: 1.6rem;
+      line-height: 1.8;
+      text-align: center;
+      word-break: keep-all;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed #ffd54f;
+      white-space: pre-line;
+      letter-spacing: 1px;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .nav-btn {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 12px 26px;
+      border-radius: 25px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    .nav-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .nav-btn:not(:disabled):hover {
+      background-color: var(--primary-color);
+      transform: scale(1.05);
+    }
+
+    .page-indicator {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .thumbnail-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      overflow-x: auto;
+      width: 100%;
+      max-width: 800px;
+      padding: 10px 5px;
+    }
+
+    .thumb {
+      width: 65px;
+      height: 65px;
+      border-radius: 12px;
+      cursor: pointer;
+      opacity: 0.6;
+      border: 3px solid transparent;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #2c3e50;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumb.active {
+      opacity: 1;
+      border-color: var(--primary-color);
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 600px) {
+      .image-wrapper {
+        height: 280px;
+      }
+      .story-text {
+        font-size: 1.35rem;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="home-btn">🏠 홈으로</a>
+    <div class="tts-controls">
+      <button id="ttsToggleBtn" class="tts-btn active" onclick="toggleTts()">🔊 음성 켜짐</button>
+      <button class="tts-btn" onclick="speakCurrentPage()">▶ 다시 듣기</button>
+    </div>
+  </header>
+
+  <div class="book-container">
+    <div class="image-wrapper">
+      <img id="storyImg" class="story-image" src="page1.png" alt="동화 이미지" onerror="this.src='chawon.png'">
+    </div>
+    
+    <div class="story-text" id="storyText">
+      이야기를 불러오는 중입니다...
+    </div>
+
+    <div class="navigation">
+      <button class="nav-btn" id="prevBtn" onclick="prevPage()">◀ 이전 장</button>
+      <span class="page-indicator" id="pageIndicator">1 / 9</span>
+      <button class="nav-btn" id="nextBtn" onclick="nextPage()">다음 장 ▶</button>
+    </div>
+  </div>
+
+  <div class="thumbnail-container" id="thumbContainer"></div>
+
+  <script>
+    const storyData = [
+      {
+        page: 1,
+        img: 'page1.png',
+        text: "낮에는 하늘에 살짝 걸린 초승달이,\n밤에는 온 세상을 환히 비추는 커다란 보름달이 있는\n아주 신비로운 마을이 있었어요.\n\n그 마을에는\n귀여운 세 살 여자아이 채원이가\n엄마, 아빠와 함께 행복하게 살고 있었답니다."
+      },
+      {
+        page: 2,
+        img: 'page2.png',
+        text: "어느 햇살 가득한 날,\n가족은 무지개 바다로 신나게 떠나기로 했어요.\n\n\"채원아, 준비 끝났니?\"\n\"네! 엄마, 아빠 얼른 가요!\"\n\n브로콜리인형을 꼭 안은 채원이는 힘차게 대답했어요."
+      },
+      {
+        page: 3,
+        img: 'page3.png',
+        text: "부릉부릉—\n두근두근—\n드디어 무지개 바다에 도착했어요!\n\n신이 난 채원이는 모래사장을 이리저리 뛰어다녔어요.\n\"야호! 무지개 바다다!\""
+      },
+      {
+        page: 4,
+        img: 'page4.png',
+        text: "채원이는 엄마를 따라\n바닷속에 들어갔어요.\n엄마는 첨벙! 수영을 했고,\n채원이는 \"어푸어푸!\" 따라 했어요.\n\n처음엔 조금 무서웠지만, 용기를 내니\n재미있는 일이 가득했어요."
+      },
+      {
+        page: 5,
+        img: 'page5.png',
+        text: "용감해진 채원이는 엄마와 함께\n깊은 바닷속까지 들어갔어요!\n\n그곳에서는\n무지개 꽃들이\n살랑살랑 춤을 추고 있었답니다.\n아름답고 신비로운 바닷속 풍경이었어요."
+      },
+      {
+        page: 6,
+        img: 'page6.png',
+        text: "이번엔 물고기들을 만났어요.\n\"물고기들아, 안녕!\"\n\n채원이는 아빠랑 같이 무지개 물고기들에게\n먹이를 나누어 주었지요."
+      },
+      {
+        page: 7,
+        img: 'page7.png',
+        text: "채원이는 불가사리와 조개를 발견했어요.\n\"이건 무슨 맛일까?\"\n조개를 쏙 먹는 시늉을 했어요.\n\n채원이의 장난에\n엄마아빠는 하하호호\n웃음을 터뜨렸답니다."
+      },
+      {
+        page: 8,
+        img: 'page8.png',
+        text: "신나게 놀던 채원이와 엄마는\n아빠와 함께 집에 갈 준비를 했어요.\n\n떠나는 것이 아쉬웠지만,\n다음에 다시 오기로 아빠와 엄마와 약속했답니다.\n\"다음에 또 만나자, 무지개 바다야!\""
+      },
+      {
+        page: 9,
+        img: 'page9.png',
+        text: "집으로 돌아가는 길,\n보름달이 환하게\n비추어주었어요.\n\n채원이는 집에 도착할 때까지\n엄마에게 무지개바다 이야기를 했어요.\n\"엄마, 무지개 물고기들이 다정했어요.\n또 갈래요!\""
+      }
+    ];
+
+    let currentIndex = 0;
+    let isTtsEnabled = true;
+    let selectedVoice = null;
+
+    // 한국어 전용 목소리를 고정으로 탐색하는 함수
+    function getKoreanVoice() {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      
+      // 우선순위: 자연스러운 온라인/고품질 한국어 목소리 -> 일반 한국어 목소리
+      return voices.find(v => v.lang.includes('ko') && (v.name.includes('Natural') || v.name.includes('Sun-Hi') || v.name.includes('Google') || v.name.includes('Online')))
+          || voices.find(v => v.lang.includes('ko') || v.lang.includes('KO'));
+    }
+
+    // 목소리가 비동기로 로드될 때 지정하도록 설정
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        selectedVoice = getKoreanVoice();
+      };
+    }
+
+    function speakCurrentPage() {
+      if (!isTtsEnabled || !('speechSynthesis' in window)) return;
+
+      try {
+        window.speechSynthesis.cancel();
+
+        const text = storyData[currentIndex].text;
+        if (!text) return;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ko-KR';
+        utterance.rate = 0.85;
+        utterance.pitch = 1.15;
+
+        if (!selectedVoice) {
+          selectedVoice = getKoreanVoice();
+        }
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.warn("TTS 실행 처리:", err);
+      }
+    }
+
+    function toggleTts() {
+      isTtsEnabled = !isTtsEnabled;
+      const btn = document.getElementById('ttsToggleBtn');
+      if (isTtsEnabled) {
+        btn.innerText = '🔊 음성 켜짐';
+        btn.classList.add('active');
+        speakCurrentPage();
+      } else {
+        btn.innerText = '🔇 음성 끔';
+        btn.classList.remove('active');
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    function updatePage() {
+      const data = storyData[currentIndex];
+
+      const imgElem = document.getElementById('storyImg');
+      if (imgElem) {
+        imgElem.src = data.img;
+      }
+
+      const textElem = document.getElementById('storyText');
+      if (textElem) {
+        textElem.innerText = data.text;
+      }
+
+      const pageIndicator = document.getElementById('pageIndicator');
+      if (pageIndicator) {
+        pageIndicator.innerText = `${currentIndex + 1} / ${storyData.length}`;
+      }
+
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      if (prevBtn) prevBtn.disabled = (currentIndex === 0);
+      if (nextBtn) nextBtn.disabled = (currentIndex === storyData.length - 1);
+
+      const thumbs = document.querySelectorAll('.thumb');
+      thumbs.forEach((thumb, idx) => {
+        if (idx === currentIndex) {
+          thumb.classList.add('active');
+          thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else {
+          thumb.classList.remove('active');
+        }
+      });
+
+      speakCurrentPage();
+    }
+
+    function prevPage() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updatePage();
+      }
+    }
+
+    function nextPage() {
+      if (currentIndex < storyData.length - 1) {
+        currentIndex++;
+        updatePage();
+      }
+    }
+
+    function renderThumbnails() {
+      const container = document.getElementById('thumbContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      
+      storyData.forEach((item, index) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb' + (index === 0 ? ' active' : '');
+        
+        const img = document.createElement('img');
+        img.src = item.img;
+        img.alt = `${index + 1}페이지`;
+        img.onerror = () => { thumb.innerText = `${index + 1}장`; };
+
+        thumb.appendChild(img);
+
+        thumb.onclick = () => {
+          currentIndex = index;
+          updatePage();
+        };
+        container.appendChild(thumb);
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevPage();
+      if (e.key === 'ArrowRight') nextPage();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderThumbnails();
+      selectedVoice = getKoreanVoice();
+      updatePage();
+    });
+  </script>
+</body>
+</html>
