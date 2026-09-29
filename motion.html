@@ -343,18 +343,18 @@ html, body {
           this.isCustom = true;
         }
 
-        // 아이들 눈에 맞춰 적절하고 작은 크기 (35~50px)
-        this.size = this.isCustom ? (45 + Math.random() * 15) : (35 + Math.random() * 15);
+        // 기본 이모티콘은 아기자기하게 더 작게(22~32px), 아이 그림은 주인공답게 훨씬 크게(85~115px) 조정
+        this.size = this.isCustom ? (85 + Math.random() * 30) : (22 + Math.random() * 10);
         
         // 자연스러운 좌우/상하 자유로운 수영 방향 지정
         this.dirX = Math.random() < 0.5 ? 1 : -1;
         
         if (initial) {
-          this.x = Math.random() * (canvas.width - 100) + 50;
-          this.y = Math.random() * (canvas.height - 100) + 50;
+          this.x = Math.random() * (canvas.width - 120) + 60;
+          this.y = Math.random() * (canvas.height - 120) + 60;
         } else {
           this.x = this.dirX === 1 ? -this.size : canvas.width + this.size;
-          this.y = Math.random() * (canvas.height - 100) + 50;
+          this.y = Math.random() * (canvas.height - 120) + 60;
         }
 
         // 자연스럽게 유영하는 속도 (0.6 ~ 1.5)
@@ -369,7 +369,7 @@ html, body {
         this.angle += this.swingSpeed;
         this.y += Math.sin(this.angle) * 0.8 + this.speedY;
 
-        // 화면 밖으로 나가면 자연스럽게 반대편이나 재배치
+        // 화면 밖으로 나가면 자연스럽게 재배치
         if (this.x < -this.size * 2 || this.x > canvas.width + this.size * 2) {
           this.reset(false);
         }
@@ -390,16 +390,16 @@ html, body {
         }
 
         if (this.isCustom && this.img && this.img.complete) {
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-          ctx.shadowBlur = 6;
-          ctx.shadowOffsetY = 3;
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
+          ctx.shadowBlur = 10;
+          ctx.shadowOffsetY = 4;
           ctx.drawImage(this.img, -this.size/2, -this.size/2, this.size, this.size);
         } else {
           ctx.font = `${this.size}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
-          ctx.shadowBlur = 5;
+          ctx.shadowBlur = 4;
           ctx.fillText(this.emoji, 0, 0);
         }
 
@@ -408,7 +408,7 @@ html, body {
 
       isTouched(px, py) {
         const dist = Math.hypot(this.x - px, this.y - py);
-        return dist < this.size * 0.9;
+        return dist < this.size * 0.85;
       }
 
       swimFast() {
@@ -429,7 +429,7 @@ html, body {
         creatures.push(new SeaCreature(imgData));
       });
 
-      // 자연스러운 바다를 위한 바다 친구들 (8~10마리)
+      // 배경을 채워줄 귀여운 이모티콘 친구들
       const count = Math.max(10 - customImages.length, 6);
       for (let i = 0; i < count; i++) {
         creatures.push(new SeaCreature());
@@ -490,7 +490,7 @@ html, body {
       initCreatures();
     });
 
-    // 2배 크고 맑은 도레미파솔라시도 음계 소리
+    // 맑은 도레미파솔라시도 음계 소리
     function playScaleSound() {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -505,7 +505,6 @@ html, body {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, ctxAudio.currentTime);
 
-        // 풍부한 0.8 볼륨
         gain.gain.setValueAtTime(0.8, ctxAudio.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctxAudio.currentTime + 0.35);
 
