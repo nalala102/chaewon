@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -906,288 +907,289 @@ button.active, button.is-active, button.selected, button.is-selected, button[ari
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>파스텔 무지개 바다 게임</title>
+  <title>파스텔 무지개 바다 터뜨리기 게임</title>
   <style>
-    /* Widget specific layout & animation glue */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: var(--ff-sans);
-      background: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-    }
-
+    /* Widget specific layout glue */
     .widget-container {
       width: 100%;
-      min-height: 480px;
-      max-width: 680px;
-      margin: 0 auto;
+      min-height: 520px;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: var(--ff-sans, 'Google Sans Flex', -apple-system, sans-serif);
+      color: var(--on-surface);
       position: relative;
-      overflow: hidden;
-      border-radius: var(--lumi-sys-shape--medium, 16px);
-      box-shadow: 0 8px 32px rgba(180, 150, 210, 0.25);
-      background: linear-gradient(135deg, #ffd6e8 0%, #e5c3ff 35%, #c4f0ff 70%, #fff2b2 100%);
-      background-size: 200% 200%;
-      animation: pastelFlow 12s ease infinite;
+      user-select: none;
+      -webkit-user-select: none;
       box-sizing: border-box;
+      border-radius: var(--r-l, 16px);
+      background: linear-gradient(135deg, #ffd3e2, #ffdfbf, #fff3bf, #c1f7d5, #c2e3ff, #e1c7ff);
+      background-size: 300% 300%;
+      animation: pastelGradient 16s ease infinite;
     }
 
-    @keyframes pastelFlow {
+    @keyframes pastelGradient {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
-    /* Top HUD / Progress bar */
-    .game-hud {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      right: 16px;
+    /* Game Header / Bar */
+    .game-header {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .hud-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: var(--surface-translucent, rgba(255, 255, 255, 0.65));
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 10px 18px;
-      border-radius: 999px;
-      box-shadow: 0 4px 12px rgba(140, 100, 180, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      justify-content: space-between;
+      padding: var(--spacing-m, 12px) var(--spacing-l, 16px);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      position: relative;
+      z-index: 10;
     }
 
-    .hud-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #6b4c9a;
-      display: flex;
+    .header-btn {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--r-full, 999px);
+      background: var(--surface-bright, #ffffff);
+      color: var(--on-surface, #1c1c1c);
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .score-badge {
-      font-family: var(--ff-mono);
-      font-size: 16px;
-      font-weight: 700;
-      color: #ff5e97;
-      background: #ffffff;
-      padding: 4px 12px;
-      border-radius: 999px;
-      box-shadow: 0 2px 6px rgba(255, 94, 151, 0.2);
+    .header-btn:active {
+      transform: scale(0.96);
     }
 
-    .star-slots {
+    .score-badge-container {
       display: flex;
-      justify-content: space-between;
-      gap: 4px;
-      padding: 0 4px;
+      align-items: center;
+      gap: var(--spacing-m, 12px);
     }
 
-    .star-dot {
-      flex: 1;
-      height: 10px;
-      border-radius: 999px;
-      background: var(--surface-translucent, rgba(255, 255, 255, 0.5));
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--surface-translucent, rgba(255, 255, 255, 0.85));
+      border-radius: var(--r-full, 999px);
+      font-size: 15px;
+      font-weight: 700;
+      color: #2b3a4a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-    .star-dot.filled {
-      background: linear-gradient(135deg, #ff7eb3, #ff758c);
-      box-shadow: 0 0 10px rgba(255, 120, 160, 0.8);
-      transform: scaleY(1.3);
+    .score-pill span {
+      color: var(--accent-fixed, #3186ff);
     }
 
     /* Game Play Area */
-    .play-area {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .game-stage {
+      position: relative;
       width: 100%;
-      height: 100%;
-      z-index: 5;
-    }
-
-    /* Creature Container */
-    .creature {
-      position: absolute;
-      width: 88px;
-      height: 88px;
+      height: 420px;
+      overflow: hidden;
       cursor: pointer;
-      transform-origin: center center;
-      transition: transform 0.15s ease-out;
-      will-change: transform, left, top;
-      filter: drop-shadow(0 6px 12px rgba(120, 90, 160, 0.2));
     }
 
-    .creature:active {
-      transform: scale(0.85);
-    }
-
-    .creature svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* Canvas for particles and fireworks */
-    #fxCanvas {
+    /* Floating particles background canvas */
+    #particleCanvas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 8;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Interactive Characters */
+    .character {
+      position: absolute;
+      width: 82px;
+      height: 82px;
+      cursor: pointer;
+      z-index: 5;
+      touch-action: manipulation;
+      transition: transform 0.1s ease-out;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
+      will-change: transform, left, top;
+    }
+
+    .character svg {
+      width: 100%;
+      height: 100%;
       pointer-events: none;
     }
 
-    /* Popup Modal */
-    .modal-overlay {
+    .character:active {
+      transform: scale(1.15);
+    }
+
+    /* Pop effect animation */
+    @keyframes popDisappear {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    .popping {
+      animation: popDisappear 0.25s forwards ease-out;
+      pointer-events: none !important;
+    }
+
+    /* Bursting stardust/heart particles overlay */
+    .burst-particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 8;
+      font-size: 22px;
+      animation: burstFly 0.6s ease-out forwards;
+    }
+
+    @keyframes burstFly {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.6) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4) rotate(var(--rot));
+      }
+    }
+
+    /* Victory Modal Popup */
+    .victory-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(100, 70, 130, 0.35);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       z-index: 20;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.3s ease;
     }
 
-    .modal-overlay.active {
+    .victory-overlay.is-visible {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .success-card {
-      background: var(--surface-translucent, rgba(255, 255, 255, 0.95));
-      border: 2px solid rgba(255, 255, 255, 1);
-      border-radius: 28px;
-      padding: 32px 28px;
+    .victory-card {
+      background: var(--surface-bright, #ffffff);
+      padding: var(--spacing-xl, 24px) var(--spacing-xl, 28px);
+      border-radius: var(--r-l, 20px);
       text-align: center;
       max-width: 320px;
       width: 85%;
-      box-shadow: 0 20px 50px rgba(130, 80, 180, 0.3);
-      transform: scale(0.7) translateY(20px);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .modal-overlay.active .success-card {
-      transform: scale(1) translateY(0);
+    .victory-overlay.is-visible .victory-card {
+      transform: scale(1);
     }
 
-    .success-badge-icon {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 12px auto;
-      display: block;
-    }
-
-    .success-title {
-      font-size: 22px;
+    .victory-title {
+      font-size: 24px;
       font-weight: 800;
-      color: #6a3da8;
+      color: var(--on-surface, #121212);
       margin: 0 0 8px 0;
     }
 
-    .success-sub {
-      font-size: 14px;
-      color: var(--on-surface-variant);
-      margin: 0 0 24px 0;
+    .victory-subtitle {
+      font-size: 15px;
+      color: var(--on-surface-variant, rgba(0,0,0,0.65));
+      margin: 0 0 20px 0;
       line-height: 1.4;
     }
 
-    .replay-btn {
-      background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    .victory-score-box {
+      background: var(--accent-container, #dcf1ff);
+      color: var(--accent-fixed, #3186ff);
+      padding: 12px;
+      border-radius: var(--r-m, 12px);
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+
+    .play-again-btn {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--r-full, 999px);
+      background: var(--accent-fixed, #3186ff);
       color: #ffffff;
-      border: none;
-      padding: 14px 32px;
       font-size: 16px;
       font-weight: 700;
-      border-radius: 999px;
+      border: none;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(160, 120, 210, 0.4);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(49, 134, 255, 0.35);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .play-again-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Bottom Control Bar */
+    .footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-m, 10px) var(--spacing-l, 16px);
+      background: var(--surface-translucent, rgba(255, 255, 255, 0.55));
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      position: relative;
+      z-index: 10;
+    }
+
+    .progress-bar-track {
+      flex: 1;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.08);
+      border-radius: var(--r-full, 999px);
+      overflow: hidden;
+      margin-right: 12px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff7eb9, #ffb199, #ffe380, #7afcbe, #69c0ff);
+      border-radius: var(--r-full, 999px);
+      transition: width 0.3s ease;
+    }
+
+    .sound-toggle-btn {
+      background: var(--surface-bright, #ffffff);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: var(--r-full, 999px);
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--on-surface);
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-    }
-
-    .replay-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(160, 120, 210, 0.5);
-    }
-
-    .replay-btn:active {
-      transform: translateY(1px);
-    }
-
-    /* Ambient Floating Bubbles in BG */
-    .bubble {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: floatUp linear infinite;
-    }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(100%) scale(0.8);
-        opacity: 0;
-      }
-      20% { opacity: 0.7; }
-      80% { opacity: 0.7; }
-      100% {
-        transform: translateY(-120px) scale(1.2);
-        opacity: 0;
-      }
-    }
-
-    /* Floating Score Popup (+10) */
-    .pop-score {
-      position: absolute;
-      font-family: var(--ff-mono);
-      font-size: 22px;
-      font-weight: 900;
-      color: #ff3385;
-      text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9);
-      pointer-events: none;
-      z-index: 15;
-      animation: scoreFly 0.8s ease-out forwards;
-    }
-
-    @keyframes scoreFly {
-      0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(0.6) translateY(0);
-      }
-      50% {
-        transform: translate(-50%, -50%) scale(1.2) translateY(-24px);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1) translateY(-48px);
-      }
+      gap: 4px;
     }
   </style>
 <script id="lumi-os-theme-init">
@@ -1236,549 +1238,503 @@ button.active, button.is-active, button.selected, button.is-selected, button[ari
 </script>
 </head>
 <body>
+  <div class="widget-container" id="app">
+    <!-- Game Header -->
+    <div class="game-header">
+      <button class="header-btn" id="homeBtn" aria-label="홈으로 이동">
+        <span>🏠</span> 홈으로
+      </button>
 
-<div class="widget-container">
-  <!-- Ambient BG Bubbles Container -->
-  <div id="bubblesBg" style="position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></div>
-
-  <!-- HUD Header -->
-  <div class="game-hud">
-    <div class="hud-header">
-      <div class="hud-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff6599"/>
-        </svg>
-        <span>무지개 바다 터뜨리기</span>
+      <div class="score-badge-container">
+        <div class="score-pill">
+          터치: <span id="popCount">0</span> / 10
+        </div>
+        <div class="score-pill">
+          점수: <span id="scoreVal">0</span>점
+        </div>
       </div>
-      <div class="score-badge" id="scoreText">0 / 100점</div>
     </div>
-    <div class="star-slots" id="starSlots">
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
-      <div class="star-dot"></div>
+
+    <!-- Interactive Stage -->
+    <div class="game-stage" id="stage">
+      <canvas id="particleCanvas"></canvas>
+      <!-- Characters dynamically spawned here -->
     </div>
-  </div>
 
-  <!-- Interactive Creature Spawn Canvas/Layer -->
-  <div class="play-area" id="playArea"></div>
-
-  <!-- FX Canvas for Particles & Fireworks -->
-  <canvas id="fxCanvas"></canvas>
-
-  <!-- Success Popup Modal -->
-  <div class="modal-overlay" id="successModal">
-    <div class="success-card">
-      <svg class="success-badge-icon" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="45" fill="#fff3b2"/>
-        <path d="M50 15 L61 38 L85 41 L67 58 L72 82 L50 70 L28 82 L33 58 L15 41 L39 38 Z" fill="#ffb703"/>
-        <circle cx="38" cy="48" r="4" fill="#503000"/>
-        <circle cx="62" cy="48" r="4" fill="#503000"/>
-        <path d="M42 60 Q50 68 58 60" fill="none" stroke="#503000" stroke-width="3" stroke-linecap="round"/>
-      </svg>
-      <h3 class="success-title">축하합니다! 성공!</h3>
-      <p class="success-sub">10개의 바다 친구를 모두 찾았어요!<br>완전 멋져요!</p>
-      <button class="replay-btn" id="replayBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="1 4 1 10 7 10"></polyline>
-          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-        </svg>
-        <span>다시 놀기</span>
+    <!-- Footer Progress Bar & Controls -->
+    <div class="footer-bar">
+      <div class="progress-bar-track" aria-label="진행도">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <button class="sound-toggle-btn" id="soundBtn">
+        <span id="soundIcon">🔊</span> 소리 켜짐
       </button>
     </div>
+
+    <!-- Victory Overlay -->
+    <div class="victory-overlay" id="victoryOverlay">
+      <div class="victory-card">
+        <div class="victory-title">🎉 최고예요!</div>
+        <div class="victory-subtitle">바다 친구들을 모두 잘 찾았어요!<br>100점 성공!</div>
+        <div class="victory-score-box">100 점</div>
+        <button class="play-again-btn" id="restartBtn">다시 놀기 🔄</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<script>
-  // Web Audio Synth for cute sound effects
-  class SoundEffects {
-    constructor() {
-      this.ctx = null;
-    }
+  <script>
+    // --- Audio Synthesis via Web Audio API ---
+    let audioCtx = null;
+    let soundEnabled = true;
 
-    init() {
-      if (!this.ctx) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-          this.ctx = new AudioCtx();
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
         }
       }
-      if (this.ctx && this.ctx.state === 'suspended') {
-        this.ctx.resume();
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
     }
 
-    playPop(pitchMultiplier = 1) {
-      if (!this.ctx) return;
+    function playPopSound() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
       try {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
         osc.type = 'sine';
-
-        const now = this.ctx.currentTime;
-        const startFreq = 400 * pitchMultiplier;
-        const endFreq = 880 * pitchMultiplier;
-
-        osc.frequency.setValueAtTime(startFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.08);
+        // Pitch drop / pop sound
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(400 + Math.random() * 200, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.12);
 
         gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
 
         osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        gain.connect(audioCtx.destination);
 
         osc.start(now);
         osc.stop(now + 0.12);
       } catch (e) {
-        console.warn('Audio playback prevented:', e);
+        console.error('Audio error:', e);
       }
     }
 
-    playFanfare() {
-      if (!this.ctx) return;
+    function playVictorySound() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+
       try {
+        const now = audioCtx.currentTime;
         const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
         notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
           osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
 
-          const startTime = this.ctx.currentTime + idx * 0.1;
-          osc.frequency.setValueAtTime(freq, startTime);
-
-          gain.gain.setValueAtTime(0.3, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+          gain.gain.setValueAtTime(0.3, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.3);
 
           osc.connect(gain);
-          gain.connect(this.ctx.destination);
+          gain.connect(audioCtx.destination);
 
-          osc.start(startTime);
-          osc.stop(startTime + 0.3);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.3);
         });
       } catch (e) {
-        console.warn('Fanfare sound prevented:', e);
+        console.error('Audio error:', e);
       }
     }
-  }
 
-  const sfx = new SoundEffects();
+    // --- SVG Character Definitions (Expressive cute Big-Eyes Sea Creatures) ---
+    const CHARACTERS = [
+      // 1. Pink Fish
+      `<svg viewBox="0 0 100 100" fill="none">
+        <path d="M75 50 C90 30, 95 20, 95 50 C95 80, 90 70, 75 50 Z" fill="#FF72A2" />
+        <ellipse cx="48" cy="50" rx="36" ry="28" fill="#FFA3C2" />
+        <circle cx="32" cy="42" r="11" fill="white" />
+        <circle cx="30" cy="42" r="6" fill="#1C1C1C" />
+        <circle cx="28" cy="39" r="2.5" fill="white" />
+        <circle cx="50" cy="42" r="11" fill="white" />
+        <circle cx="48" cy="42" r="6" fill="#1C1C1C" />
+        <circle cx="46" cy="39" r="2.5" fill="white" />
+        <path d="M 36 60 Q 40 66 44 60" stroke="#E63973" stroke-width="3" stroke-linecap="round" fill="none" />
+        <circle cx="24" cy="52" r="4" fill="#FF4D88" opacity="0.4" />
+        <circle cx="58" cy="52" r="4" fill="#FF4D88" opacity="0.4" />
+      </svg>`,
+      // 2. Blue Fish
+      `<svg viewBox="0 0 100 100" fill="none">
+        <path d="M75 50 C90 28, 95 18, 95 50 C95 82, 90 72, 75 50 Z" fill="#4DA8FF" />
+        <ellipse cx="48" cy="50" rx="36" ry="28" fill="#80C1FF" />
+        <circle cx="32" cy="42" r="11" fill="white" />
+        <circle cx="30" cy="42" r="6" fill="#1C1C1C" />
+        <circle cx="28" cy="39" r="2.5" fill="white" />
+        <circle cx="50" cy="42" r="11" fill="white" />
+        <circle cx="48" cy="42" r="6" fill="#1C1C1C" />
+        <circle cx="46" cy="39" r="2.5" fill="white" />
+        <path d="M 36 60 Q 40 67 44 60" stroke="#1A73E8" stroke-width="3" stroke-linecap="round" fill="none" />
+        <circle cx="24" cy="52" r="4" fill="#1A73E8" opacity="0.3" />
+        <circle cx="58" cy="52" r="4" fill="#1A73E8" opacity="0.3" />
+      </svg>`,
+      // 3. Yellow Fish
+      `<svg viewBox="0 0 100 100" fill="none">
+        <path d="M75 50 C90 30, 95 20, 95 50 C95 80, 90 70, 75 50 Z" fill="#FFD033" />
+        <ellipse cx="48" cy="50" rx="36" ry="28" fill="#FFE380" />
+        <circle cx="32" cy="42" r="11" fill="white" />
+        <circle cx="30" cy="42" r="6" fill="#1C1C1C" />
+        <circle cx="28" cy="39" r="2.5" fill="white" />
+        <circle cx="50" cy="42" r="11" fill="white" />
+        <circle cx="48" cy="42" r="6" fill="#1C1C1C" />
+        <circle cx="46" cy="39" r="2.5" fill="white" />
+        <path d="M 36 60 Q 40 66 44 60" stroke="#E6A100" stroke-width="3" stroke-linecap="round" fill="none" />
+        <circle cx="24" cy="52" r="4" fill="#FF8800" opacity="0.3" />
+        <circle cx="58" cy="52" r="4" fill="#FF8800" opacity="0.3" />
+      </svg>`,
+      // 4. Jellyfish
+      `<svg viewBox="0 0 100 100" fill="none">
+        <path d="M20 48 C20 20, 80 20, 80 48 C80 54, 20 54, 20 48 Z" fill="#D299FF" />
+        <path d="M28 52 Q 28 80 32 88 M40 52 Q 40 78 44 86 M52 52 Q 52 80 56 88 M64 52 Q 64 78 68 86" stroke="#B366FF" stroke-width="4" stroke-linecap="round" fill="none" />
+        <circle cx="38" cy="38" r="9" fill="white" />
+        <circle cx="37" cy="38" r="5" fill="#1C1C1C" />
+        <circle cx="35" cy="36" r="2" fill="white" />
+        <circle cx="56" cy="38" r="9" fill="white" />
+        <circle cx="55" cy="38" r="5" fill="#1C1C1C" />
+        <circle cx="53" cy="36" r="2" fill="white" />
+        <path d="M 43 45 Q 47 50 51 45" stroke="#8C1AFF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      </svg>`,
+      // 5. Starfish
+      `<svg viewBox="0 0 100 100" fill="none">
+        <path d="M50 10 L61 36 L89 38 L67 57 L74 84 L50 69 L26 84 L33 57 L11 38 L39 36 Z" fill="#FF9E66" stroke="#FF7A33" stroke-width="3" stroke-linejoin="round" />
+        <circle cx="41" cy="42" r="8" fill="white" />
+        <circle cx="40" cy="42" r="4" fill="#1C1C1C" />
+        <circle cx="39" cy="40" r="1.8" fill="white" />
+        <circle cx="59" cy="42" r="8" fill="white" />
+        <circle cx="58" cy="42" r="4" fill="#1C1C1C" />
+        <circle cx="57" cy="40" r="1.8" fill="white" />
+        <path d="M 45 52 Q 50 57 55 52" stroke="#D94B00" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      </svg>`
+    ];
 
-  // SVG Templates for 5 Cute Sea Creatures
-  const CREATURE_SVGS = [
-    // 1. Rainbow Fish
-    `<svg viewBox="0 0 100 100">
-      <ellipse cx="48" cy="50" rx="36" ry="28" fill="#ff9a9e"/>
-      <path d="M78 50 L95 35 L90 50 L95 65 Z" fill="#fecfef"/>
-      <path d="M38 23 Q48 10 58 23 Z" fill="#a1c4fd"/>
-      <circle cx="32" cy="42" r="8" fill="#ffffff"/>
-      <circle cx="30" cy="42" r="4" fill="#2b2d42"/>
-      <circle cx="28" cy="40" r="1.5" fill="#ffffff"/>
-      <circle cx="26" cy="54" r="5" fill="#ff80bf" opacity="0.6"/>
-      <path d="M32 58 Q38 64 44 58" fill="none" stroke="#2b2d42" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>`,
-    // 2. Cute Pink Starfish
-    `<svg viewBox="0 0 100 100">
-      <path d="M50 10 L61 38 L90 41 L67 60 L74 88 L50 72 L26 88 L33 60 L10 41 L39 38 Z" fill="#ffb3ba" stroke="#ff8093" stroke-width="3" stroke-linejoin="round"/>
-      <circle cx="40" cy="45" r="6" fill="#ffffff"/>
-      <circle cx="39" cy="45" r="3" fill="#2b2d42"/>
-      <circle cx="38" cy="44" r="1" fill="#ffffff"/>
-      <circle cx="60" cy="45" r="6" fill="#ffffff"/>
-      <circle cx="59" cy="45" r="3" fill="#2b2d42"/>
-      <circle cx="58" cy="44" r="1" fill="#ffffff"/>
-      <circle cx="33" cy="52" r="4" fill="#ff5c77" opacity="0.6"/>
-      <circle cx="67" cy="52" r="4" fill="#ff5c77" opacity="0.6"/>
-      <path d="M45 56 Q50 62 55 56" fill="none" stroke="#2b2d42" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>`,
-    // 3. Cute Jellyfish
-    `<svg viewBox="0 0 100 100">
-      <path d="M20 50 A30 30 0 0 1 80 50 C80 58 70 58 65 54 C60 58 50 58 45 54 C40 58 30 58 20 50 Z" fill="#b5ead7"/>
-      <path d="M30 56 Q28 80 34 90" fill="none" stroke="#77ddb5" stroke-width="3" stroke-linecap="round"/>
-      <path d="M43 56 Q45 82 41 92" fill="none" stroke="#77ddb5" stroke-width="3" stroke-linecap="round"/>
-      <path d="M57 56 Q55 82 59 92" fill="none" stroke="#77ddb5" stroke-width="3" stroke-linecap="round"/>
-      <path d="M70 56 Q72 80 66 90" fill="none" stroke="#77ddb5" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="38" cy="38" r="5" fill="#ffffff"/>
-      <circle cx="37" cy="38" r="2.5" fill="#2b2d42"/>
-      <circle cx="62" cy="38" r="5" fill="#ffffff"/>
-      <circle cx="61" cy="38" r="2.5" fill="#2b2d42"/>
-      <path d="M44 44 Q50 49 56 44" fill="none" stroke="#2b2d42" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>`,
-    // 4. Baby Sea Turtle
-    `<svg viewBox="0 0 100 100">
-      <ellipse cx="50" cy="52" rx="26" ry="22" fill="#c7ceea"/>
-      <circle cx="50" cy="24" r="14" fill="#b5ead7"/>
-      <ellipse cx="22" cy="42" rx="10" ry="6" transform="rotate(-30 22 42)" fill="#b5ead7"/>
-      <ellipse cx="78" cy="42" rx="10" ry="6" transform="rotate(30 78 42)" fill="#b5ead7"/>
-      <ellipse cx="28" cy="68" rx="8" ry="5" transform="rotate(20 28 68)" fill="#b5ead7"/>
-      <ellipse cx="72" cy="68" rx="8" ry="5" transform="rotate(-20 72 68)" fill="#b5ead7"/>
-      <circle cx="45" cy="20" r="3" fill="#2b2d42"/>
-      <circle cx="55" cy="20" r="3" fill="#2b2d42"/>
-      <path d="M47 26 Q50 29 53 26" fill="none" stroke="#2b2d42" stroke-width="2" stroke-linecap="round"/>
-    </svg>`,
-    // 5. Pastel Puffer Fish
-    `<svg viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="32" fill="#e2f0cb"/>
-      <circle cx="36" cy="42" r="7" fill="#ffffff"/>
-      <circle cx="34" cy="42" r="3.5" fill="#2b2d42"/>
-      <circle cx="33" cy="40" r="1.2" fill="#ffffff"/>
-      <circle cx="30" cy="54" r="5" fill="#ffb7b2" opacity="0.6"/>
-      <path d="M38 56 Q44 62 50 56" fill="none" stroke="#2b2d42" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M18 50 L10 44 L10 56 Z" fill="#c7e59b"/>
-      <path d="M78 48 L88 42 L88 58 Z" fill="#c7e59b"/>
-    </svg>`
-  ];
+    // --- State Management ---
+    let popCount = 0;
+    const MAX_POPS = 10;
+    let score = 0;
+    let activeCharacters = [];
+    let animationFrameId = null;
 
-  // Game State
-  const state = {
-    count: 0,
-    maxCount: 10,
-    creatures: []
-  };
+    const stage = document.getElementById('stage');
+    const popCountEl = document.getElementById('popCount');
+    const scoreValEl = document.getElementById('scoreVal');
+    const progressFill = document.getElementById('progressFill');
+    const victoryOverlay = document.getElementById('victoryOverlay');
+    const restartBtn = document.getElementById('restartBtn');
+    const homeBtn = document.getElementById('homeBtn');
+    const soundBtn = document.getElementById('soundBtn');
+    const soundIcon = document.getElementById('soundIcon');
 
-  const playArea = document.getElementById('playArea');
-  const scoreText = document.getElementById('scoreText');
-  const starSlots = document.getElementById('starSlots').children;
-  const successModal = document.getElementById('successModal');
-  const replayBtn = document.getElementById('replayBtn');
-  const fxCanvas = document.getElementById('fxCanvas');
-  const ctx = fxCanvas.getContext('2d');
+    // Particle Canvas for ambient sea bubbles & fireworks
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let ambientBubbles = [];
+    let fireworks = [];
 
-  let particles = [];
-  let fireworks = [];
-  let animFrameId = null;
-
-  // Resize FX Canvas
-  function resizeCanvas() {
-    const rect = playArea.getBoundingClientRect();
-    fxCanvas.width = rect.width;
-    fxCanvas.height = rect.height;
-  }
-  window.addEventListener('resize', resizeCanvas);
-
-  // Background Ambient Bubbles
-  function createBubbles() {
-    const bg = document.getElementById('bubblesBg');
-    if (bg) bg.innerHTML = '';
-    for (let i = 0; i < 12; i++) {
-      const b = document.createElement('div');
-      b.className = 'bubble';
-      const size = Math.random() * 18 + 8;
-      b.style.width = size + 'px';
-      b.style.height = size + 'px';
-      b.style.left = Math.random() * 90 + 5 + '%';
-      b.style.bottom = '-30px';
-      b.style.animationDuration = Math.random() * 6 + 6 + 's';
-      b.style.animationDelay = Math.random() * 5 + 's';
-      bg.appendChild(b);
+    function resizeCanvas() {
+      canvas.width = stage.clientWidth;
+      canvas.height = stage.clientHeight;
     }
-  }
 
-  // Particle System (Hearts & Stars Dust)
-  function createPopParticles(x, y) {
-    const colors = ['#ff7eb3', '#ff758c', '#a1c4fd', '#c2e9fb', '#ffb703', '#e2f0cb'];
-    for (let i = 0; i < 16; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 5 + 2;
-      particles.push({
-        x: x,
-        y: y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 1,
-        radius: Math.random() * 6 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: 1,
-        life: 1,
-        decay: Math.random() * 0.03 + 0.02,
-        isHeart: Math.random() > 0.4
+    function initBubbles() {
+      ambientBubbles = [];
+      for (let i = 0; i < 20; i++) {
+        ambientBubbles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: 3 + Math.random() * 8,
+          speed: 0.4 + Math.random() * 0.8,
+          alpha: 0.2 + Math.random() * 0.4
+        });
+      }
+    }
+
+    function drawAmbientBubbles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw ambient rising bubbles
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.lineWidth = 1.5;
+
+      ambientBubbles.forEach(b => {
+        b.y -= b.speed;
+        if (b.y < -10) {
+          b.y = canvas.height + 10;
+          b.x = Math.random() * canvas.width;
+        }
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      // Draw celebration fireworks
+      fireworks.forEach((fw, idx) => {
+        fw.x += fw.vx;
+        fw.y += fw.vy;
+        fw.vy += 0.08; // gravity
+        fw.alpha -= 0.02;
+
+        if (fw.alpha <= 0) {
+          fireworks.splice(idx, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = fw.alpha;
+          ctx.fillStyle = fw.color;
+          ctx.beginPath();
+          ctx.arc(fw.x, fw.y, fw.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
       });
     }
-  }
 
-  // Confetti / Fireworks for Success
-  function launchFirework() {
-    const x = Math.random() * fxCanvas.width;
-    const y = Math.random() * (fxCanvas.height * 0.5) + fxCanvas.height * 0.2;
-    const colors = ['#ff4081', '#7c4dff', '#00e5ff', '#ffeb3b', '#76ff03', '#ff9100'];
-
-    for (let i = 0; i < 40; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * 7 + 3;
-      fireworks.push({
-        x: x,
-        y: y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        radius: Math.random() * 5 + 3,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: 1,
-        decay: Math.random() * 0.015 + 0.01
-      });
+    function triggerFireworks() {
+      const colors = ['#FF598F', '#FD8A5E', '#E0E300', '#01DDDD', '#00BFAF', '#B366FF'];
+      for (let i = 0; i < 60; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 6;
+        fireworks.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1,
+          size: 3 + Math.random() * 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1
+        });
+      }
     }
-  }
 
-  function renderFX() {
-    ctx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+    // --- Character Spawning & Floating Loop ---
+    class FloatingChar {
+      constructor(id) {
+        this.id = id;
+        this.el = document.createElement('div');
+        this.el.className = 'character';
+        this.el.innerHTML = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+        
+        const stageW = stage.clientWidth || 360;
+        const stageH = stage.clientHeight || 420;
 
-    // Draw Pop Particles
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.1; // gravity
-      p.alpha -= p.decay;
+        this.x = Math.random() * (stageW - 90) + 10;
+        this.y = stageH + Math.random() * 80;
+        this.speedY = 0.8 + Math.random() * 0.8;
+        this.wiggleAmp = 15 + Math.random() * 20;
+        this.wiggleFreq = 0.02 + Math.random() * 0.02;
+        this.initialX = this.x;
+        this.time = Math.random() * 100;
 
-      if (p.alpha <= 0) {
-        particles.splice(i, 1);
-        continue;
+        this.updatePosition();
+        
+        // Touch/Click Handler
+        this.el.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          this.pop(e.clientX, e.clientY);
+        });
+
+        stage.appendChild(this.el);
       }
 
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, p.alpha);
-      ctx.fillStyle = p.color;
+      update() {
+        this.time += 1;
+        this.y -= this.speedY;
+        this.x = this.initialX + Math.sin(this.time * this.wiggleFreq) * this.wiggleAmp;
 
-      if (p.isHeart) {
-        // Draw Heart
-        ctx.beginPath();
-        const topCurveHeight = p.radius * 0.3;
-        ctx.moveTo(p.x, p.y + topCurveHeight);
-        ctx.bezierCurveTo(p.x, p.y, p.x - p.radius, p.y, p.x - p.radius, p.y + topCurveHeight);
-        ctx.bezierCurveTo(p.x - p.radius, p.y + (p.radius + topCurveHeight) / 2, p.x, p.y + p.radius * 1.3, p.x, p.y + p.radius * 1.5);
-        ctx.bezierCurveTo(p.x, p.y + p.radius * 1.3, p.x + p.radius, p.y + (p.radius + topCurveHeight) / 2, p.x + p.radius, p.y + topCurveHeight);
-        ctx.bezierCurveTo(p.x + p.radius, p.y, p.x, p.y, p.x, p.y + topCurveHeight);
-        ctx.closePath();
-        ctx.fill();
-      } else {
-        // Draw Circle / Star
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-    }
+        const stageH = stage.clientHeight || 420;
+        if (this.y < -90) {
+          this.y = stageH + 20;
+          this.initialX = Math.random() * (stage.clientWidth - 90) + 10;
+        }
 
-    // Draw Victory Fireworks
-    for (let i = fireworks.length - 1; i >= 0; i--) {
-      const f = fireworks[i];
-      f.x += f.vx;
-      f.y += f.vy;
-      f.vy += 0.08;
-      f.alpha -= f.decay;
-
-      if (f.alpha <= 0) {
-        fireworks.splice(i, 1);
-        continue;
+        this.updatePosition();
       }
 
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, f.alpha);
-      ctx.fillStyle = f.color;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+      updatePosition() {
+        this.el.style.left = `${this.x}px`;
+        this.el.style.top = `${this.y}px`;
+      }
+
+      pop(clientX, clientY) {
+        if (this.popped || popCount >= MAX_POPS) return;
+        this.popped = true;
+
+        playPopSound();
+        spawnBurstParticles(clientX, clientY);
+
+        this.el.classList.add('popping');
+
+        // Increment count & score
+        popCount++;
+        score = popCount * 10;
+        updateUI();
+
+        setTimeout(() => {
+          this.destroy();
+          if (popCount < MAX_POPS) {
+            // Respawn new character
+            activeCharacters.push(new FloatingChar(Date.now() + Math.random()));
+          } else {
+            handleVictory();
+          }
+        }, 220);
+      }
+
+      destroy() {
+        if (this.el && this.el.parentNode) {
+          this.el.parentNode.removeChild(this.el);
+        }
+        activeCharacters = activeCharacters.filter(c => c !== this);
+      }
     }
 
-    animFrameId = requestAnimationFrame(renderFX);
-  }
+    function spawnBurstParticles(x, y) {
+      const stageRect = stage.getBoundingClientRect();
+      const localX = x - stageRect.left;
+      const localY = y - stageRect.top;
 
-  // Floating Score Text (+10)
-  function showFloatingScore(x, y) {
-    const scoreEl = document.createElement('div');
-    scoreEl.className = 'pop-score';
-    if (scoreEl) scoreEl.textContent = '+10점!';
-    scoreEl.style.left = x + 'px';
-    scoreEl.style.top = y + 'px';
-    playArea.appendChild(scoreEl);
+      const symbols = ['❤️', '⭐', '✨', '💖', '🌟'];
+      for (let i = 0; i < 6; i++) {
+        const p = document.createElement('div');
+        p.className = 'burst-particle';
+        if (p) p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        p.style.left = `${localX}px`;
+        p.style.top = `${localY}px`;
 
-    setTimeout(() => {
-      if (scoreEl.parentNode) scoreEl.parentNode.removeChild(scoreEl);
-    }, 800);
-  }
+        const angle = (Math.PI * 2 / 6) * i + Math.random() * 0.4;
+        const dist = 40 + Math.random() * 50;
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist;
+        const rot = (Math.random() - 0.5) * 180;
 
-  // Creature Object Class
-  class CreatureItem {
-    constructor(id) {
-      this.id = id;
-      this.el = document.createElement('div');
-      this.el.className = 'creature';
-      this.typeIndex = id % CREATURE_SVGS.length;
-      this.el.innerHTML = CREATURE_SVGS[this.typeIndex];
+        p.style.setProperty('--dx', `${dx}px`);
+        p.style.setProperty('--dy', `${dy}px`);
+        p.style.setProperty('--rot', `${rot}deg`);
 
-      this.x = 0;
-      this.y = 0;
-      this.vx = (Math.random() - 0.5) * 1.8;
-      this.vy = (Math.random() - 0.5) * 1.8;
-      this.size = 88;
-
-      this.el.addEventListener('pointerdown', (e) => this.onTap(e));
-      playArea.appendChild(this.el);
-      this.resetPosition();
+        stage.appendChild(p);
+        setTimeout(() => {
+          if (p.parentNode) p.parentNode.removeChild(p);
+        }, 600);
+      }
     }
 
-    resetPosition() {
-      const rect = playArea.getBoundingClientRect();
-      const padding = 20;
-      const topOffset = 80; // avoid HUD
-
-      const w = rect.width || 340;
-      const h = rect.height || 480;
-
-      this.x = Math.random() * (w - this.size - padding * 2) + padding;
-      this.y = Math.random() * (h - this.size - topOffset - padding) + topOffset;
-      this.vx = (Math.random() < 0.5 ? -1 : 1) * (Math.random() * 1.2 + 0.6);
-      this.vy = (Math.random() < 0.5 ? -1 : 1) * (Math.random() * 1.2 + 0.6);
-
-      this.updateStyle();
+    function updateUI() {
+      if (popCountEl) popCountEl.textContent = popCount;
+      if (scoreValEl) scoreValEl.textContent = score;
+      progressFill.style.width = `${(popCount / MAX_POPS) * 100}%`;
     }
 
-    update() {
-      const rect = playArea.getBoundingClientRect();
-      const w = rect.width || 340;
-      const h = rect.height || 480;
-      const topOffset = 80;
-
-      this.x += this.vx;
-      this.y += this.vy;
-
-      if (this.x <= 10 || this.x >= w - this.size - 10) this.vx *= -1;
-      if (this.y <= topOffset || this.y >= h - this.size - 10) this.vy *= -1;
-
-      this.updateStyle();
+    function handleVictory() {
+      playVictorySound();
+      triggerFireworks();
+      setTimeout(() => {
+        victoryOverlay.classList.add('is-visible');
+      }, 300);
     }
 
-    updateStyle() {
-      this.el.style.left = this.x + 'px';
-      this.styleTop = this.y;
-      this.el.style.top = this.y + 'px';
-    }
-
-    onTap(e) {
-      e.preventDefault();
-      sfx.init();
-
-      if (state.count >= state.maxCount) return;
-
-      const rect = this.el.getBoundingClientRect();
-      const parentRect = playArea.getBoundingClientRect();
-      const clickX = rect.left - parentRect.left + rect.width / 2;
-      const clickY = rect.top - parentRect.top + rect.height / 2;
-
-      // Sound pitch scales up with progress
-      sfx.playPop(1 + state.count * 0.08);
-
-      // Effects
-      createPopParticles(clickX, clickY);
-      showFloatingScore(clickX, clickY);
-
-      // Advance State
-      state.count += 1;
+    function resetGame() {
+      popCount = 0;
+      score = 0;
       updateUI();
+      victoryOverlay.classList.remove('is-visible');
 
-      if (state.count >= state.maxCount) {
-        onGameSuccess();
-      } else {
-        // Respawn creature somewhere else
-        this.resetPosition();
+      // Clear existing characters
+      activeCharacters.forEach(c => c.destroy());
+      activeCharacters = [];
+
+      // Spawn 5 initial characters
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          if (activeCharacters.length < 5) {
+            activeCharacters.push(new FloatingChar(i));
+          }
+        }, i * 200);
       }
     }
 
-    destroy() {
-      if (this.el.parentNode) this.el.parentNode.removeChild(this.el);
+    // Animation Loop
+    function mainLoop() {
+      drawAmbientBubbles();
+      activeCharacters.forEach(c => c.update());
+      animationFrameId = requestAnimationFrame(mainLoop);
     }
-  }
 
-  function updateUI() {
-    if (scoreText) scoreText.textContent = `${state.count * 10} / 100점`;
+    // --- Controls & Event Listeners ---
+    restartBtn.addEventListener('click', resetGame);
 
-    for (let i = 0; i < starSlots.length; i++) {
-      if (i < state.count) {
-        starSlots[i].classList.add('filled');
+    homeBtn.addEventListener('click', () => {
+      resetGame();
+    });
+
+    soundBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      if (soundEnabled) {
+        if (soundIcon) soundIcon.textContent = '🔊';
+        soundBtn.childNodes[1].textContent = ' 소리 켜짐';
       } else {
-        starSlots[i].classList.remove('filled');
+        if (soundIcon) soundIcon.textContent = '🔇';
+        soundBtn.childNodes[1].textContent = ' 소리 끔';
+      }
+    });
+
+    // Initialize Widget
+    window.addEventListener('resize', resizeCanvas);
+
+    function init() {
+      resizeCanvas();
+      initBubbles();
+      resetGame();
+      if (!animationFrameId) {
+        mainLoop();
       }
     }
-  }
 
-  function onGameSuccess() {
-    sfx.playFanfare();
+    init();
 
-    // Trigger repeated firework bursts
-    for (let i = 0; i < 5; i++) {
-      setTimeout(launchFirework, i * 250);
+    // Auto-Resize & Theme handling
+    const applyTheme = t => {
+      document.documentElement.setAttribute('data-theme', t);
+    };
+    if (!document.documentElement.hasAttribute('data-theme') && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+      applyTheme('dark');
     }
+    window.addEventListener('message', e => {
+      if (e.data?.type === 'set-theme' || e.data?.type === 'APPLY_THEME') {
+        applyTheme(e.data.theme);
+      }
+    });
 
-    setTimeout(() => {
-      successModal.classList.add('active');
-    }, 400);
-  }
-
-  function initGame() {
-    sfx.init();
-    state.count = 0;
-    updateUI();
-    successModal.classList.remove('active');
-
-    // Clear existing creatures
-    state.creatures.forEach(c => c.destroy());
-    state.creatures = [];
-
-    resizeCanvas();
-
-    // Spawn 5 creatures
-    for (let i = 0; i < 5; i++) {
-      state.creatures.push(new CreatureItem(i));
-    }
-  }
-
-  // Main Loop for Moving Creatures
-  function gameLoop() {
-    if (state.count < state.maxCount) {
-      state.creatures.forEach(c => c.update());
-    }
-    requestAnimationFrame(gameLoop);
-  }
-
-  // Replay
-  replayBtn.addEventListener('click', () => {
-    initGame();
-  });
-
-  // Entry Point
-  createBubbles();
-  initGame();
-  renderFX();
-  gameLoop();
-
-  // Iframe Auto-Resize & Theme Message Handler
-  const applyTheme = t => {
-    document.documentElement.setAttribute('data-theme', t);
-  };
-  if (!document.documentElement.hasAttribute('data-theme') && window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
-    applyTheme('dark');
-  }
-  window.addEventListener('message', e => {
-    if (e.data?.type === 'set-theme' || e.data?.type === 'APPLY_THEME') applyTheme(e.data.theme);
-  });
-
-  (function autoResize() {
-    function notifyHeight() {
-      const c = document.querySelector('.widget-container') || document.body;
-      if (!c) return;
-      const h = Math.ceil(Math.max(c.getBoundingClientRect().bottom, c.scrollHeight));
-      window.parent.postMessage({type: 'widget-resize', height: h}, '*');
-    }
-    window.addEventListener('load', () => setTimeout(notifyHeight, 120));
-    new ResizeObserver(() => notifyHeight()).observe(document.querySelector('.widget-container') || document.body);
-  })();
-</script>
-
+    (function autoResize() {
+      function notifyHeight() {
+        const c = document.querySelector('.widget-container') || document.body;
+        if (!c) return;
+        const h = Math.ceil(Math.max(c.getBoundingClientRect().bottom, c.scrollHeight));
+        window.parent.postMessage({type: 'widget-resize', height: h}, '*');
+      }
+      window.addEventListener('load', () => setTimeout(notifyHeight, 120));
+      new ResizeObserver(() => notifyHeight()).observe(document.querySelector('.widget-container') || document.body);
+    })();
+  </script>
 
 <script>/*luminous-slider-normalizer*/(function(){function f(r){if(!r||r.type!=='range')return;var mn=parseFloat(r.min||'0'),mx=parseFloat(r.max||'100'),v=parseFloat(r.value);if(isNaN(v))v=(mn+mx)/2;var p=mx>mn?((v-mn)/(mx-mn))*100:50;r.style.setProperty('--progress',p+'%');r.style.removeProperty('--slider-fill');}function all(){document.querySelectorAll('input[type="range"], .lumi-slider').forEach(f);}document.addEventListener('input',function(e){f(e.target);});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',all);else all();})();</script>
 </body>
 </html>
+```
